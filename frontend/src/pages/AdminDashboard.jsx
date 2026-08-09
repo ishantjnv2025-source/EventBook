@@ -1,4 +1,4 @@
- import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 
@@ -12,11 +12,7 @@ function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchDashboard();
-    }, []);
-
-    async function fetchDashboard() {
+    const fetchDashboard = useCallback(async () => {
         try {
             const res = await api.get("/admin/dashboard");
 
@@ -33,7 +29,12 @@ function AdminDashboard() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchDashboard, 0);
+        return () => clearTimeout(timer);
+    }, [fetchDashboard]);
 
     // Loading
     if (loading) {

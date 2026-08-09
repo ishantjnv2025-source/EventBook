@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { backendUrl } from "../services/api";
 
@@ -9,16 +9,7 @@ function Events() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            // eslint-disable-next-line react-hooks/immutability
-            fetchEvents();
-        }, 300);
-
-        return () => clearTimeout(timeout);
-    }, [search, category]);
-
-    async function fetchEvents() {
+    const fetchEvents = useCallback(async () => {
         try {
             setIsLoading(true);
 
@@ -38,7 +29,13 @@ function Events() {
         } finally {
             setIsLoading(false);
         }
-    }
+    }, [search, category]);
+
+    useEffect(() => {
+        const timeout = setTimeout(fetchEvents, 300);
+
+        return () => clearTimeout(timeout);
+    }, [fetchEvents]);
 
     if (isLoading) {
         return (

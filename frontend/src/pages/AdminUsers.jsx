@@ -1,4 +1,4 @@
- import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../services/api";
 
 function AdminUsers() {
@@ -6,11 +6,7 @@ function AdminUsers() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    async function fetchUsers() {
+    const fetchUsers = useCallback(async () => {
         try {
             const res = await api.get("/admin/users");
 
@@ -27,7 +23,12 @@ function AdminUsers() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchUsers, 0);
+        return () => clearTimeout(timer);
+    }, [fetchUsers]);
 
     // =========================
     // LOADING

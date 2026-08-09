@@ -24,26 +24,19 @@ import AdminBookings from "./pages/AdminBookings";
 
 
 function DashboardRoute() {
-    let isLoggedIn = false;
-    let isAdmin = false;
+    let user;
 
     try {
-        const user = JSON.parse(localStorage.getItem("user"));
-
-        isLoggedIn = Boolean(user);
-        isAdmin = user?.role === "admin";
-
+        user = JSON.parse(localStorage.getItem("user"));
     } catch {
-        // Invalid localStorage data
-        isLoggedIn = false;
-        isAdmin = false;
-    }
-
-    if (!isLoggedIn) {
         return null;
     }
 
-    return isAdmin ? (
+    if (!user) {
+        return null;
+    }
+
+    return user.role === "admin" ? (
         <AdminDashboard />
     ) : (
         <Dashboard />

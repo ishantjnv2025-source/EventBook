@@ -1,4 +1,4 @@
-  import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 
@@ -18,12 +18,7 @@ function EditEvent() {
         seats: "",
     });
 
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/immutability
-        fetchEvent();
-    }, []);
-
-    async function fetchEvent() {
+    const fetchEvent = useCallback(async () => {
         try {
 
             const res = await api.get(`/events/${id}`);
@@ -46,7 +41,12 @@ function EditEvent() {
             console.log(error);
             alert("Unable to load event.");
         }
-    }
+    }, [id]);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchEvent, 0);
+        return () => clearTimeout(timer);
+    }, [fetchEvent]);
 
     const handleChange = (e) => {
 

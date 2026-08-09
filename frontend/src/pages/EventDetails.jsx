@@ -1,4 +1,4 @@
-  import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
@@ -10,12 +10,7 @@ function EventDetails() {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/immutability
-        fetchEvent();
-    }, []);
-
-    async function fetchEvent() {
+    const fetchEvent = useCallback(async () => {
         try {
 
             const res = await api.get(`/events/${id}`);
@@ -28,7 +23,12 @@ function EventDetails() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchEvent, 0);
+        return () => clearTimeout(timer);
+    }, [fetchEvent]);
 
     const handleDelete = async () => {
 

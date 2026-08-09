@@ -1,4 +1,4 @@
- import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../services/api";
 
 function MyBookings() {
@@ -6,11 +6,7 @@ function MyBookings() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchBookings();
-    }, []);
-
-    async function fetchBookings() {
+    const fetchBookings = useCallback(async () => {
         try {
             const res = await api.get("/bookings/my-bookings");
 
@@ -25,7 +21,12 @@ function MyBookings() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchBookings, 0);
+        return () => clearTimeout(timer);
+    }, [fetchBookings]);
 
     if (loading) {
         return (

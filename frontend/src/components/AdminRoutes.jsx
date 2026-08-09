@@ -4,12 +4,12 @@ function AdminRoute() {
 
     const token = localStorage.getItem("token");
 
-    let user = null;
+    let user;
 
     try {
         user = JSON.parse(localStorage.getItem("user"));
     } catch {
-        user = null;
+        return <Navigate to="/login" replace />;
     }
 
     // Not logged in

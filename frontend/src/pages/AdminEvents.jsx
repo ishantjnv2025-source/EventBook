@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api, { backendUrl } from "../services/api";
 
 function AdminEvents() {
@@ -6,11 +6,7 @@ function AdminEvents() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
-
-    async function fetchEvents() {
+    const fetchEvents = useCallback(async () => {
         try {
             const res = await api.get("/admin/events");
 
@@ -27,7 +23,12 @@ function AdminEvents() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchEvents, 0);
+        return () => clearTimeout(timer);
+    }, [fetchEvents]);
 
     // =========================
     // LOADING

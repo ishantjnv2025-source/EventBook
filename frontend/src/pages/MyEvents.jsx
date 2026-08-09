@@ -1,4 +1,4 @@
- import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, { backendUrl } from "../services/api";
 
@@ -7,11 +7,7 @@ function MyEvents() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        fetchMyEvents();
-    }, []);
-
-    async function fetchMyEvents() {
+    const fetchMyEvents = useCallback(async () => {
         try {
             setLoading(true);
 
@@ -31,7 +27,12 @@ function MyEvents() {
         } finally {
             setLoading(false);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(fetchMyEvents, 0);
+        return () => clearTimeout(timer);
+    }, [fetchMyEvents]);
 
     async function deleteEvent(eventId) {
         const confirmDelete = window.confirm(

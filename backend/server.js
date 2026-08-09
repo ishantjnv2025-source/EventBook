@@ -36,7 +36,17 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.get("/", (req, res) => {
-    res.send("EventBook Backend Running...");
+    const frontendUrl = allowedOrigins[0];
+
+    if (frontendUrl) {
+        return res.redirect(frontendUrl);
+    }
+
+    return res.json({ message: "EventBook API is running" });
+});
+
+app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
 });
 
 app.use("/api/auth", authRoutes);
