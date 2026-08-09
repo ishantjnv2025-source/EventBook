@@ -1,0 +1,64 @@
+import express from "express";
+
+import protect from "../middleware/authMiddleware.js";
+import { adminOnly } from "../middleware/adminMiddleware.js";
+
+import {
+    getDashboardStats,
+    getAllUsers,
+    getAllAdminEvents,
+    getAllBookings,
+} from "../controllers/adminController.js";
+
+const router = express.Router();
+
+
+// =====================================
+// ADMIN DASHBOARD STATISTICS
+// GET /api/admin/dashboard
+// =====================================
+router.get(
+    "/dashboard",
+    protect,
+    adminOnly,
+    getDashboardStats
+);
+
+
+// =====================================
+// GET ALL USERS
+// GET /api/admin/users
+// =====================================
+router.get(
+    "/users",
+    protect,
+    adminOnly,
+    getAllUsers
+);
+
+
+// =====================================
+// GET ALL EVENTS
+// GET /api/admin/events
+// =====================================
+router.get(
+    "/events",
+    protect,
+    adminOnly,
+    getAllAdminEvents
+);
+
+
+// =====================================
+// GET ALL BOOKINGS
+// GET /api/admin/bookings
+// =====================================
+router.get(
+    "/bookings",
+    protect,
+    adminOnly,
+    getAllBookings
+);
+
+
+export default router;
