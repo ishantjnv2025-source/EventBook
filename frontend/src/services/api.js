@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = "https://eventbook-xosk.onrender.com";
+
+ 
 export const backendUrl = apiUrl.replace(/\/api\/?$/, "");
 
 const api = axios.create({
