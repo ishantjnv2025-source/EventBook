@@ -1,6 +1,6 @@
  import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../services/api";
+import api, { backendUrl } from "../services/api";
 
 function MyEvents() {
     const [events, setEvents] = useState([]);
@@ -161,7 +161,7 @@ function MyEvents() {
                             {event.image ? (
 
                                 <img
-                                    src={`http://localhost:5000/uploads/${event.image}`}
+                                    src={`${backendUrl}/uploads/${event.image}`}
                                     alt={event.title}
                                     className="w-full h-52 object-cover"
                                 />
