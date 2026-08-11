@@ -1,4 +1,4 @@
- import { Routes, Route } from "react-router-dom";
+  import { Navigate, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -15,164 +15,107 @@ import MyEvents from "./pages/MyEvents";
 import Profile from "./pages/Profile";
 import MyBookings from "./pages/MyBookings";
 import NotFound from "./pages/NotFound";
-import Dashboard from "./pages/Dashboard";
 
+import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUsers from "./pages/AdminUsers";
 import AdminEvents from "./pages/AdminEvents";
 import AdminBookings from "./pages/AdminBookings";
 
-
 function DashboardRoute() {
-    let user;
+    let user = null;
 
     try {
-        user = JSON.parse(localStorage.getItem("user"));
-    } catch {
-        return null;
+        const storedUser = localStorage.getItem("user");
+
+        if (storedUser) {
+            user = JSON.parse(storedUser);
+        }
+    } catch (error) {
+        console.error("Invalid user data:", error);
     }
 
     if (!user) {
-        return null;
+        return <Navigate to="/login" replace />;
     }
 
-    return user.role === "admin" ? (
-        <AdminDashboard />
-    ) : (
-        <Dashboard />
-    );
+    if (user.role === "admin") {
+        return <Navigate to="/admin/dashboard" replace />;
+    }
+
+    return <Dashboard />;
 }
 
-
 function App() {
-
     return (
         <>
-            {/* =========================
-                NAVBAR
-            ========================== */}
-
             <Navbar />
 
-
-            {/* =========================
-                ROUTES
-            ========================== */}
-
             <Routes>
+                {/* Public */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-                {/* =========================
-                    PUBLIC ROUTES
-                ========================== */}
+                {/* Events */}
+                <Route path="/events" element={<Events />} />
+                <Route path="/events/:id" element={<EventDetails />} />
 
-                <Route
-                    path="/"
-                    element={<Home />}
-                />
+                {/* Organizer */}
+                <Route path="/create-event" element={<CreateEvent />} />
+                <Route path="/edit-event/:id" element={<EditEvent />} />
+                <Route path="/my-events" element={<MyEvents />} />
+                <Route path="/my-bookings" element={<MyBookings />} />
+                <Route path="/profile" element={<Profile />} />
 
-                <Route
-                    path="/login"
-                    element={<Login />}
-                />
-
-                <Route
-                    path="/register"
-                    element={<Register />}
-                />
-
-                <Route
-                    path="/events"
-                    element={<Events />}
-                />
-
-                <Route
-                    path="/events/:id"
-                    element={<EventDetails />}
-                />
-
-
-                {/* =========================
-                    USER ROUTES
-                ========================== */}
-
-                <Route
-                    path="/create-event"
-                    element={<CreateEvent />}
-                />
-
-                <Route
-                    path="/edit-event/:id"
-                    element={<EditEvent />}
-                />
-
-                <Route
-                    path="/my-events"
-                    element={<MyEvents />}
-                />
-
-                <Route
-                    path="/my-bookings"
-                    element={<MyBookings />}
-                />
-
-                <Route
-                    path="/profile"
-                    element={<Profile />}
-                />
-
+                {/* Dashboard */}
                 <Route
                     path="/dashboard"
                     element={<DashboardRoute />}
                 />
 
-
-                {/* =========================
-                    ADMIN ROUTES
-                ========================== */}
-
-                <Route element={<AdminRoute />}>
-
-                    <Route
-                        path="/admin/dashboard"
-                        element={<AdminDashboard />}
-                    />
-
-                    <Route
-                        path="/admin/users"
-                        element={<AdminUsers />}
-                    />
-
-                    <Route
-                        path="/admin/events"
-                        element={<AdminEvents />}
-                    />
-
-                    <Route
-                        path="/admin/bookings"
-                        element={<AdminBookings />}
-                    />
-
-                </Route>
-
-
-                {/* =========================
-                    404
-                ========================== */}
-
+                {/* Admin */}
                 <Route
-                    path="*"
-                    element={<NotFound />}
+                    path="/admin/dashboard"
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
                 />
 
+                <Route
+                    path="/admin/users"
+                    element={
+                        <AdminRoute>
+                            <AdminUsers />
+                        </AdminRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/events"
+                    element={
+                        <AdminRoute>
+                            <AdminEvents />
+                        </AdminRoute>
+                    }
+                />
+
+                <Route
+                    path="/admin/bookings"
+                    element={
+                        <AdminRoute>
+                            <AdminBookings />
+                        </AdminRoute>
+                    }
+                />
+
+                {/* 404 */}
+                <Route path="*" element={<NotFound />} />
             </Routes>
 
-
-            {/* =========================
-                FOOTER
-            ========================== */}
-
             <Footer />
-
         </>
     );
 }

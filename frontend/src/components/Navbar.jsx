@@ -1,226 +1,140 @@
-  import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
     const navigate = useNavigate();
 
-    const [user, setUser] = useState(null);
+    let user = null;
 
-    // Load logged-in user
-    useEffect(() => {
-        const loadUser = () => {
-            try {
-                const savedUser = localStorage.getItem("user");
+    try {
+        user = JSON.parse(localStorage.getItem("user"));
+    } catch {
+        user = null;
+    }
 
-                if (savedUser) {
-                    setUser(JSON.parse(savedUser));
-                } else {
-                    setUser(null);
-                }
-            } catch (error) {
-                console.error("Invalid user data:", error);
-                setUser(null);
-            }
-        };
+    const isLoggedIn = Boolean(user);
+    const isAdmin = user?.role === "admin";
 
-        loadUser();
-
-        // Update navbar when localStorage changes
-        window.addEventListener("storage", loadUser);
-
-        return () => {
-            window.removeEventListener("storage", loadUser);
-        };
-    }, []);
-
-    // ===============================
-    // LOGOUT
-    // ===============================
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-
-        setUser(null);
 
         navigate("/login");
     };
 
     return (
-        <nav className="bg-white shadow-md sticky top-0 z-50">
+        <nav className="bg-white shadow-md">
+            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-            <div className="max-w-7xl mx-auto px-6 py-4">
+                {/* Logo */}
+                <Link
+                    to="/"
+                    className="text-2xl font-bold text-blue-600"
+                >
+                    EventBook
+                </Link>
 
-                <div className="flex items-center justify-between">
+                {/* Navigation Links */}
+                <div className="flex items-center gap-6">
 
-                    {/* ===============================
-                        LOGO
-                    =============================== */}
-
+                    {/* Always visible */}
                     <Link
                         to="/"
-                        className="text-2xl font-bold text-blue-600"
+                        className="text-gray-700 hover:text-blue-600 font-medium"
                     >
-                        EventBook
+                        Home
                     </Link>
 
+                    <Link
+                        to="/events"
+                        className="text-gray-700 hover:text-blue-600 font-medium"
+                    >
+                        Events
+                    </Link>
 
-                    {/* ===============================
-                        NAVIGATION
-                    =============================== */}
+                    {/* Logged-in user links */}
+                    {isLoggedIn && (
+                        <>
+                            <Link
+                                to="/create-event"
+                                className="text-gray-700 hover:text-blue-600 font-medium"
+                            >
+                                Create Event
+                            </Link>
 
-                    <div className="flex items-center gap-6">
+                            <Link
+                                to="/my-events"
+                                className="text-gray-700 hover:text-blue-600 font-medium"
+                            >
+                                My Events
+                            </Link>
 
-                        {/* Home */}
-                        <Link
-                            to="/"
-                            className="text-gray-700 hover:text-blue-600 font-medium"
-                        >
-                            Home
-                        </Link>
+                            <Link
+                                to="/my-bookings"
+                                className="text-gray-700 hover:text-blue-600 font-medium"
+                            >
+                                My Bookings
+                            </Link>
 
+                            <Link
+                                to="/dashboard"
+                                className="text-gray-700 hover:text-blue-600 font-medium"
+                            >
+                                Dashboard
+                            </Link>
 
-                        {/* Events */}
-                        <Link
-                            to="/events"
-                            className="text-gray-700 hover:text-blue-600 font-medium"
-                        >
-                            Events
-                        </Link>
+                            <Link
+                                to="/profile"
+                                className="text-gray-700 hover:text-blue-600 font-medium"
+                            >
+                                Profile
+                            </Link>
 
-
-                        {/* ===============================
-                            LOGGED-IN USER LINKS
-                        =============================== */}
-
-                        {user ? (
-                            <>
-
-                                {/* Create Event */}
+                            {/* ONLY ONE ADMIN BUTTON */}
+                            {isAdmin && (
                                 <Link
-                                    to="/create-event"
-                                    className="text-gray-700 hover:text-blue-600 font-medium"
+                                    to="/admin/dashboard"
+                                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition"
                                 >
-                                    Create Event
+                                    Admin Dashboard
                                 </Link>
+                            )}
 
+                            {/* User name */}
+                            <span className="text-gray-700 font-medium">
+                                Hi, {user?.name || "User"}
+                            </span>
 
-                                {/* My Events */}
-                                <Link
-                                    to="/my-events"
-                                    className="text-gray-700 hover:text-blue-600 font-medium"
-                                >
-                                    My Events
-                                </Link>
+                            {/* Logout */}
+                            <button
+                                onClick={handleLogout}
+                                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded-lg transition"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    )}
 
+                    {/* Logged-out links */}
+                    {!isLoggedIn && (
+                        <>
+                            <Link
+                                to="/login"
+                                className="text-gray-700 hover:text-blue-600 font-medium"
+                            >
+                                Login
+                            </Link>
 
-                                {/* My Bookings */}
-                                <Link
-                                    to="/my-bookings"
-                                    className="text-gray-700 hover:text-blue-600 font-medium"
-                                >
-                                    My Bookings
-                                </Link>
-
-
-                                {/* ===============================
-                                    DASHBOARD
-                                =============================== */}
-
-                                {user.role === "admin" ? (
-                                    <Link
-                                        to="/admin/dashboard"
-                                        className="text-gray-700 hover:text-blue-600 font-medium"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        to="/dashboard"
-                                        className="text-gray-700 hover:text-blue-600 font-medium"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                )}
-
-
-                                {/* Profile */}
-                                <Link
-                                    to="/profile"
-                                    className="text-gray-700 hover:text-blue-600 font-medium"
-                                >
-                                    Profile
-                                </Link>
-
-
-                                {/* ===============================
-                                    ADMIN
-                                =============================== */}
-
-                                {user.role === "admin" && (
-                                    <Link
-                                        to="/admin/users"
-                                        className="text-purple-600 hover:text-purple-800 font-semibold"
-                                    >
-                                        Admin
-                                    </Link>
-                                )}
-
-
-                                {/* ===============================
-                                    USER NAME
-                                =============================== */}
-
-                                <span className="text-gray-600 font-medium">
-                                    Hi, {user.name}
-                                </span>
-
-
-                                {/* ===============================
-                                    LOGOUT
-                                =============================== */}
-
-                                <button
-                                    onClick={handleLogout}
-                                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-                                >
-                                    Logout
-                                </button>
-
-                            </>
-                        ) : (
-
-                            /* ===============================
-                                LOGGED-OUT LINKS
-                            =============================== */
-
-                            <>
-
-                                {/* Login */}
-                                <Link
-                                    to="/login"
-                                    className="text-gray-700 hover:text-blue-600 font-medium"
-                                >
-                                    Login
-                                </Link>
-
-
-                                {/* Register */}
-                                <Link
-                                    to="/register"
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                                >
-                                    Register
-                                </Link>
-
-                            </>
-                        )}
-
-                    </div>
+                            <Link
+                                to="/register"
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg transition"
+                            >
+                                Register
+                            </Link>
+                        </>
+                    )}
 
                 </div>
-
             </div>
-
         </nav>
     );
 }

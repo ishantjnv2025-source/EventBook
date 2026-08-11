@@ -1,6 +1,9 @@
-import axios from "axios";
+ import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_URL || "https://eventbook-xosk.onrender.com/api";
+const apiUrl =
+    import.meta.env.VITE_API_URL ||
+    "https://eventbook-xosk.onrender.com/api";
+
 export const backendUrl = apiUrl.replace(/\/api\/?$/, "");
 
 const api = axios.create({
