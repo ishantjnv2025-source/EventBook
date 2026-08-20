@@ -141,3 +141,31 @@ export const deleteUser = async (req, res, next) => {
         next(error);
     }
 };
+// ===============================
+// DELETE EVENT - ADMIN
+// ===============================
+export const deleteAdminEvent = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        // Find event
+        const event = await Event.findById(id);
+
+        if (!event) {
+            return res.status(404).json({
+                message: "Event not found",
+            });
+        }
+
+        // Delete event
+        await Event.findByIdAndDelete(id);
+
+        res.status(200).json({
+            message: "Event deleted successfully",
+        });
+
+    } catch (error) {
+        console.error("Delete Admin Event Error:", error);
+        next(error);
+    }
+};

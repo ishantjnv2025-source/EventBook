@@ -2,7 +2,7 @@
 
 const apiUrl =
     import.meta.env.VITE_API_URL ||
-    "https://eventbook-xosk.onrender.com/api";
+    "http://localhost:5000/api";
 
 export const backendUrl = apiUrl.replace(/\/api\/?$/, "");
 

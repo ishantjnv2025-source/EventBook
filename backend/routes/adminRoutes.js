@@ -8,6 +8,7 @@ import {
     getAllUsers,
     deleteUser,
     getAllAdminEvents,
+     deleteAdminEvent,
     getAllBookings,
 } from "../controllers/adminController.js";
 
@@ -57,6 +58,17 @@ router.get(
     protect,
     adminOnly,
     getAllAdminEvents
+);
+// =====================================
+// DELETE EVENT - ADMIN
+// DELETE /api/admin/events/:id
+// =====================================
+
+router.delete(
+    "/events/:id",
+    protect,
+    adminOnly,
+    deleteAdminEvent
 );
 
 

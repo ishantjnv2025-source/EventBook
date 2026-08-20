@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+ import { useCallback, useEffect, useState } from "react";
 import api, { backendUrl } from "../services/api";
 
 function AdminEvents() {
@@ -6,6 +6,9 @@ function AdminEvents() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    // =========================
+    // FETCH ALL EVENTS
+    // =========================
     const fetchEvents = useCallback(async () => {
         try {
             const res = await api.get("/admin/events");
@@ -25,8 +28,59 @@ function AdminEvents() {
         }
     }, []);
 
+    // =========================
+    // DELETE EVENT
+    // =========================
+    const handleDeleteEvent = async (eventId) => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this event?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const res = await api.delete(
+                `/admin/events/${eventId}`
+            );
+
+            console.log(
+                "Delete Event Response:",
+                res.data
+            );
+
+            // Remove deleted event from UI
+            setEvents((prevEvents) =>
+                prevEvents.filter(
+                    (event) => event._id !== eventId
+                )
+            );
+
+            alert(
+                res.data.message ||
+                "Event deleted successfully"
+            );
+
+        } catch (error) {
+            console.error(
+                "Delete Event Error:",
+                error
+            );
+
+            alert(
+                error.response?.data?.message ||
+                "Unable to delete event"
+            );
+        }
+    };
+
+    // =========================
+    // LOAD EVENTS
+    // =========================
     useEffect(() => {
         const timer = setTimeout(fetchEvents, 0);
+
         return () => clearTimeout(timer);
     }, [fetchEvents]);
 
@@ -37,6 +91,7 @@ function AdminEvents() {
         return (
             <div className="min-h-[70vh] flex items-center justify-center">
                 <div className="text-center">
+
                     <div className="text-5xl mb-4">
                         ⏳
                     </div>
@@ -44,6 +99,7 @@ function AdminEvents() {
                     <h1 className="text-2xl font-semibold text-gray-700">
                         Loading Events...
                     </h1>
+
                 </div>
             </div>
         );
@@ -55,6 +111,7 @@ function AdminEvents() {
     if (error) {
         return (
             <div className="min-h-[70vh] flex items-center justify-center">
+
                 <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center max-w-md">
 
                     <div className="text-5xl mb-4">
@@ -70,6 +127,7 @@ function AdminEvents() {
                     </p>
 
                 </div>
+
             </div>
         );
     }
@@ -77,7 +135,9 @@ function AdminEvents() {
     return (
         <div className="max-w-7xl mx-auto px-6 py-10">
 
-            {/* HEADER */}
+            {/* =========================
+                HEADER
+            ========================= */}
             <div className="mb-8">
 
                 <h1 className="text-4xl font-bold text-gray-800">
@@ -91,12 +151,15 @@ function AdminEvents() {
             </div>
 
 
-            {/* EVENT COUNT */}
+            {/* =========================
+                EVENT COUNT
+            ========================= */}
             <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
 
                 <div className="flex items-center justify-between">
 
                     <div>
+
                         <p className="text-green-600 font-medium">
                             Total Events
                         </p>
@@ -104,6 +167,7 @@ function AdminEvents() {
                         <p className="text-3xl font-bold text-gray-800 mt-1">
                             {events.length}
                         </p>
+
                     </div>
 
                     <div className="text-5xl">
@@ -115,7 +179,9 @@ function AdminEvents() {
             </div>
 
 
-            {/* NO EVENTS */}
+            {/* =========================
+                NO EVENTS
+            ========================= */}
             {events.length === 0 ? (
 
                 <div className="bg-white border rounded-xl p-10 text-center">
@@ -136,6 +202,9 @@ function AdminEvents() {
 
             ) : (
 
+                /* =========================
+                   EVENTS GRID
+                ========================= */
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                     {events.map((event) => (
@@ -147,7 +216,9 @@ function AdminEvents() {
                                        transition-all duration-300"
                         >
 
-                            {/* IMAGE */}
+                            {/* =========================
+                                IMAGE
+                            ========================= */}
                             {event.image ? (
 
                                 <img
@@ -169,9 +240,12 @@ function AdminEvents() {
                             )}
 
 
-                            {/* CONTENT */}
+                            {/* =========================
+                                CONTENT
+                            ========================= */}
                             <div className="p-6">
 
+                                {/* TITLE + CATEGORY */}
                                 <div className="flex items-start justify-between gap-3 mb-3">
 
                                     <h2 className="text-2xl font-bold text-blue-600">
@@ -185,17 +259,21 @@ function AdminEvents() {
                                 </div>
 
 
+                                {/* DESCRIPTION */}
                                 <p className="text-gray-600 mb-5 line-clamp-2">
                                     {event.description}
                                 </p>
 
 
+                                {/* EVENT DETAILS */}
                                 <div className="space-y-2 text-sm">
 
                                     <p>
                                         <strong>Date:</strong>{" "}
                                         {event.date
-                                            ? new Date(event.date).toLocaleDateString()
+                                            ? new Date(
+                                                event.date
+                                            ).toLocaleDateString()
                                             : "N/A"}
                                     </p>
 
@@ -222,7 +300,9 @@ function AdminEvents() {
                                 </div>
 
 
-                                {/* ORGANIZER */}
+                                {/* =========================
+                                    ORGANIZER
+                                ========================= */}
                                 <div className="border-t mt-5 pt-4">
 
                                     <p className="text-sm text-gray-500 mb-1">
@@ -250,6 +330,22 @@ function AdminEvents() {
                                     )}
 
                                 </div>
+
+
+                                {/* =========================
+                                    DELETE EVENT
+                                ========================= */}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        handleDeleteEvent(
+                                            event._id
+                                        )
+                                    }
+                                    className="w-full mt-5 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition"
+                                >
+                                    Delete Event
+                                </button>
 
                             </div>
 
