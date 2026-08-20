@@ -106,3 +106,38 @@ export const getAllBookings = async (req, res, next) => {
         next(error);
     }
 };
+// ===============================
+// DELETE USER
+// ===============================
+export const deleteUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        // Find user
+        const user = await User.findById(id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        // Prevent admin from deleting their own account
+        if (user._id.toString() === req.user._id.toString()) {
+            return res.status(400).json({
+                message: "You cannot delete your own admin account",
+            });
+        }
+
+        // Delete user
+        await User.findByIdAndDelete(id);
+
+        res.status(200).json({
+            message: "User deleted successfully",
+        });
+
+    } catch (error) {
+        console.error("Delete User Error:", error);
+        next(error);
+    }
+};

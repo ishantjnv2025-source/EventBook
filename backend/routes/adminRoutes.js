@@ -6,6 +6,7 @@ import { adminOnly } from "../middleware/adminMiddleware.js";
 import {
     getDashboardStats,
     getAllUsers,
+    deleteUser,
     getAllAdminEvents,
     getAllBookings,
 } from "../controllers/adminController.js";
@@ -35,7 +36,17 @@ router.get(
     adminOnly,
     getAllUsers
 );
+// =====================================
+// DELETE USER
+// DELETE /api/admin/users/:id
+// =====================================
 
+router.delete(
+    "/users/:id",
+    protect,
+    adminOnly,
+    deleteUser
+);
 
 // =====================================
 // GET ALL EVENTS

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+ import { NavLink, useNavigate } from "react-router-dom";
 
 function Navbar() {
     const navigate = useNavigate();
@@ -21,93 +21,121 @@ function Navbar() {
         navigate("/login");
     };
 
+    // Normal navigation button style
+    const navLinkClass = ({ isActive }) =>
+        `font-medium px-3 py-2 rounded-lg transition ${
+            isActive
+                ? "bg-blue-600 text-white"
+                : "text-gray-700 hover:text-blue-600 hover:bg-blue-50"
+        }`;
+
     return (
         <nav className="bg-white shadow-md">
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/* Logo */}
-                <Link
+                <NavLink
                     to="/"
-                    className="text-2xl font-bold text-blue-600"
+                    className={({ isActive }) =>
+                        `text-2xl font-bold ${
+                            isActive
+                                ? "text-blue-700"
+                                : "text-blue-600"
+                        }`
+                    }
                 >
                     EventBook
-                </Link>
+                </NavLink>
 
                 {/* Navigation Links */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4">
 
-                    {/* Always visible */}
-                    <Link
+                    {/* Home */}
+                    <NavLink
                         to="/"
-                        className="text-gray-700 hover:text-blue-600 font-medium"
+                        end
+                        className={navLinkClass}
                     >
                         Home
-                    </Link>
+                    </NavLink>
 
-                    <Link
+                    {/* Events */}
+                    <NavLink
                         to="/events"
-                        className="text-gray-700 hover:text-blue-600 font-medium"
+                        className={navLinkClass}
                     >
                         Events
-                    </Link>
+                    </NavLink>
 
                     {/* Logged-in user links */}
                     {isLoggedIn && (
                         <>
-                            <Link
+                            {/* Create Event */}
+                            <NavLink
                                 to="/create-event"
-                                className="text-gray-700 hover:text-blue-600 font-medium"
+                                className={navLinkClass}
                             >
                                 Create Event
-                            </Link>
+                            </NavLink>
 
-                            <Link
+                            {/* My Events */}
+                            <NavLink
                                 to="/my-events"
-                                className="text-gray-700 hover:text-blue-600 font-medium"
+                                className={navLinkClass}
                             >
                                 My Events
-                            </Link>
+                            </NavLink>
 
-                            <Link
+                            {/* My Bookings */}
+                            <NavLink
                                 to="/my-bookings"
-                                className="text-gray-700 hover:text-blue-600 font-medium"
+                                className={navLinkClass}
                             >
                                 My Bookings
-                            </Link>
+                            </NavLink>
 
-                            <Link
+                            {/* Dashboard */}
+                            <NavLink
                                 to="/dashboard"
-                                className="text-gray-700 hover:text-blue-600 font-medium"
+                                className={navLinkClass}
                             >
                                 Dashboard
-                            </Link>
+                            </NavLink>
 
-                            <Link
+                            {/* Profile */}
+                            <NavLink
                                 to="/profile"
-                                className="text-gray-700 hover:text-blue-600 font-medium"
+                                className={navLinkClass}
                             >
                                 Profile
-                            </Link>
+                            </NavLink>
 
-                            {/* ONLY ONE ADMIN BUTTON */}
+                            {/* Admin Dashboard */}
                             {isAdmin && (
-                                <Link
+                                <NavLink
                                     to="/admin/dashboard"
-                                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition"
+                                    className={({ isActive }) =>
+                                        `font-semibold px-4 py-2 rounded-lg transition ${
+                                            isActive
+                                                ? "bg-indigo-800 text-white ring-2 ring-indigo-300"
+                                                : "bg-blue-600 text-white hover:bg-blue-700"
+                                        }`
+                                    }
                                 >
                                     Admin Dashboard
-                                </Link>
+                                </NavLink>
                             )}
 
-                            {/* User name */}
-                            <span className="text-gray-700 font-medium">
+                            {/* User Name */}
+                            <span className="text-gray-700 font-medium whitespace-nowrap">
                                 Hi, {user?.name || "User"}
                             </span>
 
                             {/* Logout */}
                             <button
+                                type="button"
                                 onClick={handleLogout}
-                                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded-lg transition"
+                                className="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold px-5 py-2 rounded-lg transition"
                             >
                                 Logout
                             </button>
@@ -117,19 +145,27 @@ function Navbar() {
                     {/* Logged-out links */}
                     {!isLoggedIn && (
                         <>
-                            <Link
+                            {/* Login */}
+                            <NavLink
                                 to="/login"
-                                className="text-gray-700 hover:text-blue-600 font-medium"
+                                className={navLinkClass}
                             >
                                 Login
-                            </Link>
+                            </NavLink>
 
-                            <Link
+                            {/* Register */}
+                            <NavLink
                                 to="/register"
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg transition"
+                                className={({ isActive }) =>
+                                    `font-semibold px-5 py-2 rounded-lg transition ${
+                                        isActive
+                                            ? "bg-blue-800 text-white ring-2 ring-blue-300"
+                                            : "bg-blue-600 text-white hover:bg-blue-700"
+                                    }`
+                                }
                             >
                                 Register
-                            </Link>
+                            </NavLink>
                         </>
                     )}
 
